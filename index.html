@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Data Buku</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+<body>
+    <h1>List data buku</h1>
+    <br>
+    <div class="container">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Tambah List
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Tambah Buku</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="form-tambah">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="namaBuku">Nama Buku</label>
+                                <select class="form-control" id="kategori">
+                                    <tag id="40"><option>Tashya Francis</tag></option>
+                                    <tag id="44"><option>Buku negara </tag></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Kategori</label>
+                                <select class="form-control" id="kategori">
+                                    <tag id="1"><option>Premium</tag></option>
+                                    <tag id="3"><option>Biografi </tag></option>
+                                    <tag id="4"><option>Dongeng</tag></option>
+                                    <tag id="6"><option>Komik</tag></option>
+                                    <tag id="7"><option>Ensiklopedi</tag></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- MODAL EDIT -->
+        <div class="modal fade" id="modal-edit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="form-edit">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="namabuku">Nama Buku</label>
+                                <input id="edit-namabuku" class="form-control" type="text" name="name" required>
+                                <input id="edit-id" value="" hidden readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="kategori">Kategori</label>
+                                <input id="edit-kategori" class="form-control" type="text" name="description">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="data-kelas" class="row"></div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const API = `https://mybook-order.herokuapp.com/books/type`
+    
+         $("#form-tambah").submit(function (e) {
+            e.preventDefault();
+            addClass()
+        });
+        $("#form-edit").submit(function (e) {
+            e.preventDefault();
+            editClass()
+        });
+
+        const addClass = async () => {
+            const data = {
+                "namaBuku": $("#namaBuku").val(),
+                "kategori": $("#kategori").val(),
+            }
+            try {
+                const request = await axios.post(API + "class", data)
+                alert("data berhasil ditambahkan")
+                $("#exampleModal").modal("hide")
+                getListClass()
+            } catch (err) {
+                alert(err.message)
+            }
+        }
+
+        const getListClass = () => {
+            axios.get(API + "class")
+                .then(response => {
+                    let dataBuku = response.data.data
+                    console.log(dataBuku)
+                    let listBukuHtml = ""
+                    dataBuku.forEach(kelas => {
+                        listBukuHtml += `
+                    <div class="col-md-3">
+                        <div class="card" >
+                            <div class="card-body">
+                                <h5 class="card-title">${kelas.namaBuku}</h5>
+                                <p class="card-text">${kelas.kategori}</p>
+                                <button type="button" onclick="getDetailClass(${kelas.id})" class="btn btn-outline-primary">Edit</button>
+                                <button type="button" onclick="confirmDelete(${kelas.id},'${kelas.namaBuku}')" class="btn btn-outline-danger">Delete</button>
+                            </div>
+                        </div>
+                    </div>`
+                    });
+                    $("#data-kelas").html(listBukuHtml)
+
+                })
+                .catch(err => console.log(err))
+        }
+        getListClass()
+
+        const getDetailClass = async (classId) => {
+            try {
+                const requestData = await axios.get(API + "class/" + classId)
+                const dataKelas = requestData.data.data
+                $("#edit-id").val(data.id)
+                $("#edit-namaBuku").val(data.namaBuku)
+                $("#edit-kategori").val(data.kategori)
+                $("#modal-edit").modal("show")
+            } catch (err) {
+                alert(err.message)
+            }
+        }
+
+        const editClass = async () => {
+            const data = {
+                "id": $("#edit-id").val(),
+                "namaBuku": $("#edit-namaBuku").val(),
+                "kategori": $("#edit-kategori").val(),
+            }
+            try {
+                const request = await axios.put(API + "class", data)
+                alert("sukses")
+                $("#modal-edit").modal("hide")
+                getListClass()
+            } catch (err) {
+                alert(err.message)
+            }
+        }
+
+        const confirmDelete = async (classId, name) => {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Menghapus data kelas " + name,
+                icon: 'warning',
+                showCancelButton: true,
+            }).then((result) => {
+                console.log(result)
+                if (result.isConfirmed) {
+                    deleteClass(DataId)
+                }
+            })
+        }
+
+        const deleteClass = async (classId) => {
+            try {
+                const requestDelete = await axios.delete(API + "class/" + classId)
+                getListClass()
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+
+            } catch (err) {
+                alert(err.message)
+            }
+        }
+        const API = `https://mybook-order.herokuapp.com/books`
+
+        $("#form-tambah").submit(function (e) {
+            e.preventDefault();
+            addClass()
+        });
+        $("#form-edit").submit(function (e) {
+            e.preventDefault();
+            editClass()
+        });
+
+        const addClass = async () => {
+            const data = {
+                "namaBuku": $("#namaBuku").val(),
+                "kategori": $("#kategori").val(),
+            }
+            try {
+                const request = await axios.post(API + "class", data)
+                alert("data berhasil ditambahkan")
+                $("#exampleModal").modal("hide")
+                getListClass()
+            } catch (err) {
+                alert(err.message)
+            }
+        }
+
+        const getListClass = () => {
+            axios.get(API + "class")
+                .then(response => {
+                    let dataBuku = response.data.data
+                    console.log(dataBuku)
+                    let listBukuHtml = ""
+                    dataBuku.forEach(kelas => {
+                        listBukuHtml += `
+                    <div class="col-md-3">
+                        <div class="card" >
+                            <div class="card-body">
+                                <h5 class="card-title">${kelas.namaBuku}</h5>
+                                <p class="card-text">${kelas.kategori}</p>
+                                <button type="button" onclick="getDetailClass(${kelas.id})" class="btn btn-outline-primary">Edit</button>
+                                <button type="button" onclick="confirmDelete(${kelas.id},'${kelas.namaBuku}')" class="btn btn-outline-danger">Delete</button>
+                            </div>
+                        </div>
+                    </div>`
+                    });
+                    $("#data-kelas").html(listBukuHtml)
+
+                })
+                .catch(err => console.log(err))
+        }
+        getListClass()
+
+        const getDetailClass = async (classId) => {
+            try {
+                const requestData = await axios.get(API + "class/" + classId)
+                const dataKelas = requestData.data.data
+                $("#edit-id").val(data.id)
+                $("#edit-namaBuku").val(data.namaBuku)
+                $("#edit-kategori").val(data.kategori)
+                $("#modal-edit").modal("show")
+            } catch (err) {
+                alert(err.message)
+            }
+        }
+
+        const editClass = async () => {
+            const data = {
+                "id": $("#edit-id").val(),
+                "namaBuku": $("#edit-namaBuku").val(),
+                "kategori": $("#edit-kategori").val(),
+            }
+            try {
+                const request = await axios.put(API + "class", data)
+                alert("sukses")
+                $("#modal-edit").modal("hide")
+                getListClass()
+            } catch (err) {
+                alert(err.message)
+            }
+        }
+
+        const confirmDelete = async (classId, name) => {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Menghapus data kelas " + name,
+                icon: 'warning',
+                showCancelButton: true,
+            }).then((result) => {
+                console.log(result)
+                if (result.isConfirmed) {
+                    deleteClass(DataId)
+                }
+            })
+        }
+
+        const deleteClass = async (classId) => {
+            try {
+                const requestDelete = await axios.delete(API + "class/" + classId)
+                getListClass()
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+
+            } catch (err) {
+                alert(err.message)
+            }
+        }
+    </script>
+</body>
+
+</html>
